@@ -1,0 +1,42 @@
+# dependencies
+node_modules/
+
+# compiled output
+dist/
+build/
+
+# logs
+logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+
+# tests
+coverage/
+.nyc_output/
+
+# IDEs
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# dotenv
+.env
+.env.*.local
+.env.local
+
+# temp
+.temp/
+.tmp/
+
+# runtime
+pids
+*.pid
+*.seed
+*.pid.lock
+node_modules
