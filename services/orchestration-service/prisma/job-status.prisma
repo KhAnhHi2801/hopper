@@ -1,0 +1,15 @@
+/// Tracks the status of one import job end to end, from request to completion.
+/// Updated only via the `job-events` BullMQ queue consumer — printify-service
+/// and shopify-service never write to Postgres directly, they report status
+/// through the queue so this stays the single source of truth for job state.
+model JobStatus {
+  id String @id @default(uuid())
+
+  /// One of: "PENDING" | "NORMALIZED" | "COMPLETED" | "FAILED".
+  /// Kept as a plain String (not a Prisma enum) for now — easier to iterate
+  /// on the exact value set while the pipeline is still being built.
+  status String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

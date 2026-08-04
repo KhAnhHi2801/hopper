@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { PrintifyApiModule } from './printify-api.module';
-import { PrintifyCacheModule } from './printify-cache.module';
+import { PrintifyApiModule } from './printify-api/printify-api.module';
+import { PrintifyCacheModule } from './printify-cache/printify-cache.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   RawProduct,
   RawProductSchema,
 } from '../raw-products/raw-product.schema';
 import { BullModule } from '@nestjs/bullmq';
-import { PrintifyNormalizerService } from './printify-normalizer.service';
-import { PrintifyImportProcessor } from './printify-import.processor';
-import { PrintifyCatalogProcessor } from './printify-catalog.processor';
+import { PrintifyImportProcessor } from './utils/printify-import.processor';
+import { PrintifyCatalogProcessor } from './utils/printify-catalog.processor';
+import { PrintifyNormalizerService } from './printify-nomalizer/printify-normalizer.service';
 
 /**
  * Wires together the Printify domain: imports the API/cache sub-modules,
