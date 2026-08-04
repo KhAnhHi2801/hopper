@@ -7,5 +7,19 @@
     "services/*",
     "packages/*",
     "apps/*"
-  ]
+  ],
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.3.0"
+  },
+  "scripts": {
+    "format": "npm run prettier:fix && npm run lint:fix",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx,d.ts}": [
+      "npm run format",
+      "eslint --no-ignore --max-warnings=0 --ignore-pattern '.claude/**'"
+    ]
+  }
 }
