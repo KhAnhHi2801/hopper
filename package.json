@@ -4,8 +4,8 @@
   "private": true,
   "license": "UNLICENSED",
   "workspaces": [
-    "services/*",
     "packages/*",
+    "services/*",
     "apps/*"
   ],
   "devDependencies": {
