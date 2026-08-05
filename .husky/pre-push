@@ -12,7 +12,9 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 
 restore_stash() {
+  code=$?
   [ "$STASHED" -eq 1 ] && git stash pop --quiet
+  exit $code
 }
 trap restore_stash EXIT INT TERM
 
