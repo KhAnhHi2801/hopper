@@ -6,25 +6,31 @@ NC='\033[0m'
 report_file=$(mktemp)
 fail_count=0
 
-for ws in $(node -e "console.log(require('./package.json').workspaces.join(' '))"); do
-  if ! output=$(FORCE_COLOR=1 npm test -w "$ws" --if-present --silent 2>&1); then
-    printf "%s\n" "$output"
+patterns=$(node -e "console.log(require('./package.json').workspaces.join(' '))")
 
-    stripped=$(printf "%s\n" "$output" | sed -E 's/\x1b\[[0-9;]*m//g')
-    suites=$(printf "%s\n" "$stripped" | grep "^Test Suites:" | sed 's/^Test Suites: *//')
-    tests=$(printf "%s\n" "$stripped" | grep "^Tests:" | sed 's/^Tests: *//')
+for pattern in $patterns; do
+  for ws in $pattern; do
+    [ -f "$ws/package.json" ] || continue
 
-    fail_count=$((fail_count + 1))
-    {
-      printf "%-11s%s\n" "Workspace:" "$ws"
-      printf "%-11s%s\n" "Suites:" "$suites"
-      printf "%-11s%s\n" "Tests:" "$tests"
-      printf "%-11s%s\n" "Rerun:" "npm test -w $ws"
-      printf "\n"
-    } >> "$report_file"
-  else
-    printf "%s\n" "$output"
-  fi
+    if ! output=$(FORCE_COLOR=1 npm test -w "$ws" --if-present --silent 2>&1); then
+      printf "%s\n" "$output"
+
+      stripped=$(printf "%s\n" "$output" | sed -E 's/\x1b\[[0-9;]*m//g')
+      suites=$(printf "%s\n" "$stripped" | grep "^Test Suites:" | sed 's/^Test Suites: *//')
+      tests=$(printf "%s\n" "$stripped" | grep "^Tests:" | sed 's/^Tests: *//')
+
+      fail_count=$((fail_count + 1))
+      {
+        printf "%-11s%s\n" "Workspace:" "$ws"
+        printf "%-11s%s\n" "Suites:" "$suites"
+        printf "%-11s%s\n" "Tests:" "$tests"
+        printf "%-11s%s\n" "Rerun:" "npm test -w $ws"
+        printf "\n"
+      } >> "$report_file"
+    else
+      printf "%s\n" "$output"
+    fi
+  done
 done
 
 if [ "$fail_count" -gt 0 ]; then
