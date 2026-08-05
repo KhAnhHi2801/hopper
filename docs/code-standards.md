@@ -36,6 +36,12 @@ External API responses (e.g. Printify's) are typed `unknown` at the HTTP boundar
 
 `tsconfig.base.json` does **not** set `incremental: true`. It was tried and removed: Nest CLI's `deleteOutDir: true` (its `nest-cli.json` default) wipes `dist/` on every `start:dev` restart, but tsc's `.tsbuildinfo` cache doesn't know that — it assumes output is still up to date and skips re-emitting, causing a silent `Cannot find module dist/main` error. `incremental` only pays off across separate `tsc` process invocations (CI, `tsc -b`), which nothing in this repo does yet — YAGNI, don't re-add it without that use case.
 
+## Git hooks: pre-commit vs pre-push scope
+
+`.husky/pre-commit` runs `lint-staged` (prettier + eslint) on staged files only — kept cheap because commits happen constantly, including WIP commits, and a slow pre-commit hook gets bypassed with `--no-verify`. `.husky/pre-push` runs `npm test --workspaces --if-present` — the full test suite across every workspace — because push is the point code becomes shared, so it's the right place for a heavier gate. Don't move the full test suite into pre-commit: it collapses this deliberate scope split.
+
+When debugging a pre-push failure: the commit that failed to push still exists locally (git never discards it), it's just no longer shown in an editor's "uncommitted changes" view since it's already committed. Inspect it with `git diff origin/<branch>..HEAD` (all unpushed commits) or the editor's commit-graph/history view — not by trying to recreate uncommitted state.
+
 ## Shared package barrel exports
 
 Every workspace package meant to be imported elsewhere (`@hopper/product-contract`) needs a `src/index.ts` re-exporting its public surface (`export * from './x'`) AND a `build` script in its `package.json`. Without both, `package.json`'s `main`/`types` fields point at a `dist/` that never gets generated, and consumers get `Cannot find module`.
