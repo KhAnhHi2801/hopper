@@ -1,7 +1,6 @@
 import { InjectQueue, Processor, WorkerHost } from '@nestjs/bullmq';
 import { PrintifyApiService } from '../printify-api/printify-api.service';
 import { PrintifyCacheService } from '../printify-cache/printify-cache.service';
-import { PrintifyNormalizerService } from './printify-normalizer.service';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   RawProduct,
@@ -9,6 +8,7 @@ import {
 } from '../../raw-products/raw-product.schema';
 import { Job, Queue } from 'bullmq';
 import { Model } from 'mongoose';
+import { PrintifyNormalizerService } from '../printify-nomalizer/printify-normalizer.service';
 
 interface PrintifyImportJobData {
   apiKey: string;
