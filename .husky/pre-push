@@ -1,9 +1,52 @@
 #!/usr/bin/env sh
 
+RED='\033[1;31m'
+NC='\033[0m'
+
+report_file=$(mktemp)
+fail_count=0
+
 for ws in $(node -e "console.log(require('./package.json').workspaces.join(' '))"); do
-  if ! npm test -w "$ws" --if-present --silent; then
-    echo "✗ Test FAILED in workspace: $ws"
-    echo "  Rerun: npm test -w $ws"
-    exit 1
+  if ! output=$(FORCE_COLOR=1 npm test -w "$ws" --if-present --silent 2>&1); then
+    printf "%s\n" "$output"
+
+    stripped=$(printf "%s\n" "$output" | sed -E 's/\x1b\[[0-9;]*m//g')
+    suites=$(printf "%s\n" "$stripped" | grep "^Test Suites:" | sed 's/^Test Suites: *//')
+    tests=$(printf "%s\n" "$stripped" | grep "^Tests:" | sed 's/^Tests: *//')
+
+    fail_count=$((fail_count + 1))
+    {
+      printf "%-11s%s\n" "Workspace:" "$ws"
+      printf "%-11s%s\n" "Suites:" "$suites"
+      printf "%-11s%s\n" "Tests:" "$tests"
+      printf "%-11s%s\n" "Rerun:" "npm test -w $ws"
+      printf "\n"
+    } >> "$report_file"
+  else
+    printf "%s\n" "$output"
   fi
 done
+
+if [ "$fail_count" -gt 0 ]; then
+  title="✗ $fail_count WORKSPACE(S) FAILED"
+
+  width=${#title}
+  while IFS= read -r line; do
+    [ ${#line} -gt "$width" ] && width=${#line}
+  done < "$report_file"
+
+  border=$(printf '%*s' "$((width + 2))" '' | tr ' ' '─')
+
+  printf "\n${RED}┌%s┐${NC}\n" "$border"
+  printf "${RED}│${NC} %-*s ${RED}│${NC}\n" "$width" "$title"
+  printf "${RED}├%s┤${NC}\n" "$border"
+  while IFS= read -r line; do
+    printf "${RED}│${NC} %-*s ${RED}│${NC}\n" "$width" "$line"
+  done < "$report_file"
+  printf "${RED}└%s┘${NC}\n\n" "$border"
+
+  rm -f "$report_file"
+  exit 1
+fi
+
+rm -f "$report_file"

@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "test": "jest"
   },
   "dependencies": {
     "class-transformer": "^0.5.1",
