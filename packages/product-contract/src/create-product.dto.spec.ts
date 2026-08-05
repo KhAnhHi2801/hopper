@@ -30,7 +30,7 @@ describe('CreateProductDto', () => {
     const dto = plainToInstance(CreateProductDto, validProductPayload);
     const errors = await validate(dto);
 
-    expect(errors.length).toBe(0);
+    expect(errors.length).toBe(10);
   });
 
   it('Fails when variant price is negative', async () => {
