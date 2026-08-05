@@ -1,9 +1,9 @@
 import { Processor, WorkerHost } from '@nestjs/bullmq';
 import { PrintifyApiService } from '../printify-api/printify-api.service';
 import { PrintifyCacheService } from '../printify-cache/printify-cache.service';
-import { PrintifyNormalizerService } from './printify-normalizer.service';
 import { Job } from 'bullmq';
 import { CreateProductDto } from '@hopper/product-contract';
+import { PrintifyNormalizerService } from '../printify-nomalizer/printify-normalizer.service';
 
 interface PrintifyCatalogJobData {
   apiKey: string;

@@ -6,7 +6,15 @@ import tseslint from 'typescript-eslint';
 
 export const baseConfig = tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: [
+      '**/eslint.config.mjs',
+      'eslint.config.base.mjs',
+      '**/jest.config.js',
+      '**/prisma.config.ts',
+      '**/dist/**',
+      '**/coverage/**',
+      '**/build/**',
+    ],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
