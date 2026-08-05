@@ -1,10 +1,5 @@
-#!/usr/bin/env sh
-
-for ws in $(node -e "console.log(require('./package.json').workspaces.join(' '))"); do
-  npm test -w "$ws" --if-present
-  if [ $? -ne 0 ]; then
-    echo "✗ Test FAILED in workspace: $ws"
-    echo "  Rerun: npm test -w $ws"
-    exit 1
-  fi
-done
+if ! npm test -w "$ws" --if-present; then
+  echo "✗ Test FAILED in workspace: $ws"
+  echo "  Rerun: npm test -w $ws"
+  exit 1
+fi
