@@ -13,13 +13,19 @@
     "lint-staged": "^17.3.0"
   },
   "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
+    "lint:fix": "npm run lint -- --fix",
+    "prettier": "prettier --cache --cache-location ./node_modules/.cache/prettier .",
+    "prettier:fix": "npm run prettier -- --write",
     "format": "npm run prettier:fix && npm run lint:fix",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "npm test --workspaces --if-present"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,d.ts}": [
-      "npm run format",
-      "eslint --no-ignore --max-warnings=0 --ignore-pattern '.claude/**'"
+      "prettier --cache --cache-location ./node_modules/.cache/prettier --write",
+      "eslint --cache --cache-location ./node_modules/.cache/eslint --fix --max-warnings=0"
     ]
   }
 }
