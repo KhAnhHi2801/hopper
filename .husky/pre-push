@@ -3,6 +3,19 @@
 RED='\033[1;31m'
 NC='\033[0m'
 
+# Test must run against HEAD (what's being pushed), not the working tree,
+# which may have uncommitted edits that never end up in the pushed commits.
+STASHED=0
+if [ -n "$(git status --porcelain)" ]; then
+  git stash push --include-untracked --quiet -m "pre-push-autostash"
+  STASHED=1
+fi
+
+restore_stash() {
+  [ "$STASHED" -eq 1 ] && git stash pop --quiet
+}
+trap restore_stash EXIT INT TERM
+
 report_file=$(mktemp)
 fail_count=0
 
