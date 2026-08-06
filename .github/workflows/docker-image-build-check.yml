@@ -5,12 +5,13 @@ on:
     branches: ['main', 'development']
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [services/printify-service]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - uses: actions/checkout@v4
+      - name: Build ${{matrix.service}} Docker image
+        run: docker build . --file ${{matrix.service}}/Dockerfile -t ${{matrix.service}}:latest
