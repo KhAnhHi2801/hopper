@@ -45,3 +45,5 @@ When debugging a pre-push failure: the commit that failed to push still exists l
 ## Shared package barrel exports
 
 Every workspace package meant to be imported elsewhere (`@hopper/product-contract`) needs a `src/index.ts` re-exporting its public surface (`export * from './x'`) AND a `build` script in its `package.json`. Without both, `package.json`'s `main`/`types` fields point at a `dist/` that never gets generated, and consumers get `Cannot find module`.
+
+This also depends on build _order_, not just presence of a build script: root `npm run build --workspaces --if-present` walks workspaces in the order listed in root `package.json`'s `workspaces` array (`packages/*` before `services/*` before `apps/*`). If a consuming service's workspace glob is ever listed ahead of `packages/*`, it builds before the package it imports exists — same `Cannot find module '@hopper/product-contract'` failure, but from ordering rather than a missing build script. See `deployment-guide.md`'s CI/CD section for the concrete failure this caused.
